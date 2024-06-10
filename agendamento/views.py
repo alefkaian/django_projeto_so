@@ -23,8 +23,10 @@ from django.core.paginator import Paginator
 
 
 def gerar_horarios_indisponiveis():
-    agendamentos = Agendamento.objects.filter(data__gte=timezone.now().date()).exclude(horario = None).values(
-        "data", "horario"
+    agendamentos = (
+        Agendamento.objects.filter(data__gte=timezone.now().date())
+        .exclude(horario=None)
+        .values("data", "horario")
     )
     horarios_indisponiveis = {}
 
@@ -56,7 +58,7 @@ def gerar_horarios_indisponiveis():
 
 def agendar(request, id=None):
     if id is not None:
-        agendamento = get_object_or_404(Agendamento,pk=id)
+        agendamento = get_object_or_404(Agendamento, pk=id)
     else:
         agendamento = None
 
@@ -75,7 +77,7 @@ def agendar(request, id=None):
             if request.user.is_authenticated:
                 form = AgendamentoFormAdm(instance=agendamento)
             else:
-                form = None 
+                form = None
         else:
             if request.user.is_authenticated:
                 form = AgendamentoFormAdm()
@@ -225,9 +227,11 @@ def editar_agendamentos_futuros(request):
 def editar_agendamentos_antigos(request):
     return render(request, "agendamento/editar_agendamentos_antigos.html")
 
+
 @login_required
 def editar_agendamentos_semdata(request):
     return render(request, "agendamento/editar_agendamentos_semdata.html")
+
 
 @login_required
 def tabela_ajax(request):
@@ -245,13 +249,16 @@ class ReqAgendamentosFuturos(viewsets.ModelViewSet):
     queryset = Agendamento.objects.filter(data__gte=datetime.now().date())
     serializer_class = AgendamentoSerializer
 
+
 class ReqAgendamentosAntigos(viewsets.ModelViewSet):
     queryset = Agendamento.objects.filter(data__lt=datetime.now().date())
     serializer_class = AgendamentoSerializer
 
+
 class ReqAgendamentosSemData(viewsets.ModelViewSet):
     queryset = Agendamento.objects.filter(data__isnull=True)
     serializer_class = AgendamentoSerializer
+
 
 def redirect_root(request):
     return redirect("agendar")
