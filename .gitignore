@@ -1,0 +1,12 @@
+# Arquivos/diretórios específicos
+.idea/
+.vscode/
+venv/
+venv_django/
+__pycache__/
+*.pyc
+
+# Arquivos específicos
+ck --lost-found
+.prettierrc
+db.sqlite3

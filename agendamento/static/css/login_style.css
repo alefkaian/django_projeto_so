@@ -1,0 +1,17 @@
+.card-header {
+	background-color: #f1f1f1;
+}
+
+#botaoLogin {
+	background-color: #2b77cf;
+}
+
+#layoutAuthentication {
+	min-height: 0;
+	height: 420px;
+}
+
+#layoutAuthentication_content {
+	min-height: 0;
+	height: 420px;
+}

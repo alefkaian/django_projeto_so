@@ -1,0 +1,174 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+	-webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+}
+
+img {
+	display: flex;
+	width: 120px;
+	margin: 0 auto;
+}
+
+h1 {
+	margin: 0 0 30px 0;
+	text-align: center;
+}
+
+.caixa_dados {
+	border-radius: 15px;
+	border: 1px solid #c1c1c1;
+	background-color: #f1f1f1;
+	width: 320px;
+	margin: 0 auto;
+	padding-left: 0;
+}
+
+input {
+	font-size: 18px;
+	border: 1px solid #c1c1c1;
+	padding-left: 10px;
+	border-radius: 8px;
+	width: 95%;
+	height: 25px;
+	display: block;
+	box-sizing: content-box;
+}
+
+textarea {
+	box-sizing: content-box;
+}
+
+input:focus, textarea:focus {
+	outline: none !important;
+	border: 2px solid #2b77cf !important;
+}
+
+form {
+	width: 90%;
+	margin: auto;
+	display: block;
+}
+
+label {
+	font-size: 18px;
+	display: inline-block;
+	margin: 20px 0 8px 0;
+}
+
+.botao_cadastrar {
+	background-color: #2b77cf;
+	color: white;
+	border: none;
+	margin-top: 18px;
+	margin-bottom: 20px;
+	border-radius: 6px;
+	height: 25px;
+	display: block;
+	font-size: 16px;
+}
+
+.botao_cadastrar:disabled,
+.botao_cadastrar.disabled {
+	opacity: 0.3;
+	pointer-events: none;
+}
+
+.botao_cadastrar:hover {
+	background-color: #0f7dfe;
+}
+
+p {
+	text-align: center;
+	width: 90%;
+	margin: 30px auto;
+}
+
+#aviso_conferir {
+	color: red;
+	font-size: 22px;
+	text-align: left;
+}
+
+.input_invalido {
+	border-style: solid;
+	border-width: 2 px;
+	border-color: red;
+}
+
+#id_tipo_de_animal,
+#id_horario, #id_tipo_de_agendamento {
+	display: block;
+	height: 30px;
+	font-size: 18px;
+}
+
+#id_observacoes {
+	font-size: 18px;
+	border: 1px solid #c1c1c1;
+	padding-left: 10px;
+	border-radius: 8px;
+	width: 95%;
+	height: 100px;
+	display: block;
+	resize: none;
+}
+
+.error {
+	margin-bottom: 0;
+	margin-top: 0;
+	color: red;
+	font-weight: bold;
+	text-align: left;
+}
+
+.error p {
+	text-align: left;
+	margin: 0;
+	font-size: 16px;
+}
+
+#botao_voltar {
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+}
+
+h2 {
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 50px;
+}
+
+#mensagem_confirmacao p {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	font-size: 20px;
+}
+
+.caixa_confirmacao {
+	display: flex;
+	align-items: center;
+}
+
+.caixa_confirmacao label {
+	margin-left: 20px;
+}
+
+#id_data {
+	display: none;
+}
+
+.ui-datepicker-unselectable span {
+	opacity: 0.5;
+}
+
+select option[disabled] {
+	color: rgba(0, 0, 0, 0.2);
+}

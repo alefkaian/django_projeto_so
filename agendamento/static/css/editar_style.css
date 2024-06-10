@@ -1,0 +1,13 @@
+.campo_centralizado{
+    text-align: center;
+}
+
+
+table.dataTable tbody tr:nth-child(even) {
+    background-color: #f2f2f2; /* Cor de fundo para linhas pares */
+}
+
+/* Estilo para linhas ímpares (opcional) */
+table.dataTable tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* Cor de fundo para linhas ímpares */
+}

@@ -1,0 +1,60 @@
+{% extends 'agendamento/base.html' %}
+{% load static %}
+{% block title %}
+Formulário de agendamento
+{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/agendar_style.css' %}" />
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+{% endblock %}
+{% block content %}
+<img src="{% static 'img/logo.png' %}" alt="Logo" />
+<h1>Formulário de Agendamento</h1>
+<div class="caixa_dados">
+	<form id="formulario" method="post">
+		{% csrf_token %}
+		{% if form.non_field_errors %}
+		<div class="error">
+			{% for error in form.non_field_errors %}
+			<p>{{ error }}</p>
+			{% endfor %}
+		</div>
+		{% endif %}
+
+		{% for field in form %}
+		<div class="form-group">
+			{% if field.name == 'data' %}
+			<label for="datePicker">Data da Consulta</label>
+			<input type="text" id="datePicker" autocomplete="off" placeholder="Selecione uma data" readonly="readonly" />
+			{% else %}
+			<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+			{% endif %}
+			{{ field }}
+			{% if field.errors %}
+			<div class="error">
+				{% for error in field.errors %}
+				<p>{{ error }}</p>
+				{% endfor %}
+			</div>
+			{% endif %}
+		</div>
+		{% endfor %}
+
+		<div class="caixa_confirmacao">
+			<input type="checkbox" id="confirmacao" class="form-check-input" />
+			<label for="confirmacao" class="form-check-label">Confirmo que todas as informações estão corretas</label>
+		</div>
+		<input type="submit" class="botao_cadastrar" value="Agendar" disabled />
+	</form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script src="{% static 'js/datepicker-pt-br.js' %}"></script>
+<script>
+	const horariosIndisponiveis = {{ horarios_indisponiveis|safe }};
+</script>
+<script src="{% static 'js/custom_scripts.js' %}" defer></script>
+{% endblock %}

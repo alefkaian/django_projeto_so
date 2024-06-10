@@ -1,0 +1,69 @@
+/* Estilo mais fino para o accordion */
+#bloco_principal {
+	margin-top: 30px;
+	box-sizing: border-box;
+}
+
+.row {
+	margin-bottom: 30px;
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+}
+
+.custom-accordion {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.custom-accordion .accordion-button {
+	padding: 0.5rem 1rem;
+	border-radius: 0;
+	background-color: #f8f9fa;
+	color: #212529;
+	border: 1px solid #ced4da;
+	width: 100%;
+}
+
+.custom-accordion .accordion-button:hover {
+	background-color: #e9ecef;
+}
+
+.custom-accordion .accordion-button:focus {
+	box-shadow: none;
+}
+
+.custom-accordion .accordion-button:not(.collapsed) {
+	background-color: #e9ecef;
+}
+
+.custom-accordion .accordion-item {
+	margin-bottom: 0;
+	width: 100%;
+}
+
+.dia_de_hoje .bg-primary {
+	border-width: 3px;
+	border-color: #2b77cf;
+}
+
+.dia_de_hoje {
+	color: #2b77cf;
+}
+.custom-accordion .accordion-button::after {
+	margin-left: 0;
+	position: absolute;
+	right: 1rem;
+}
+
+#tituloAccordion {
+	width: 90%;
+}
+
+p {
+	word-wrap: break-word;
+}
+
+.bg-primary {
+	background-color: #f5f5f5 !important;
+}

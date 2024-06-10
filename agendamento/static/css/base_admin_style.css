@@ -1,0 +1,40 @@
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	margin: 0;
+	background-color: #d8f4ff;
+}
+
+#bloco_principal {
+	flex: 1;
+}
+
+a {
+	text-align: center;
+}
+
+a,
+a:visited,
+a:active,
+a:link {
+	text-decoration: none;
+}
+
+.wide-button {
+	width: 100px; /* Ajuste a largura conforme necessário */
+}
+
+.sb-sidenav-light .sb-sidenav-menu .nav-link.active {
+	background-color: #f1f1f1;
+	color: inherit;
+}
+
+.sb-sidenav-light .sb-sidenav-menu .nav-link.active .sb-nav-link-icon {
+	color: #adb5bd;
+}
+
+.sb-sidenav-light .sb-sidenav-menu .nav-link:hover {
+	background-color: #e9ecef;
+	color: #007bff;
+}

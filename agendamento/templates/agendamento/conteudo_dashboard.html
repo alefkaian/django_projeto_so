@@ -1,0 +1,103 @@
+<div class="row justify-content-between text-center">
+	{% for day, agendamentos in agendamentos_week_dates %}
+	<div class="col-md-2 mb-5 pt-4 {% if day == current_date %} dia_de_hoje {% endif %}">
+		<div class="card bg-primary mb-4">
+			<div class="card-header">
+				{% with forloop.counter0 as i %}
+				{% if i == 0 %}
+				<h5 class="m-0">Seg.</h5>
+				{% elif i == 1 %}
+				<h5 class="m-0">Ter.</h5>
+				{% elif i == 2 %}
+				<h5 class="m-0">Qua.</h5>
+				{% elif i == 3 %}
+				<h5 class="m-0">Qui.</h5>
+				{% elif i == 4 %}
+				<h5 class="m-0">Sex.</h5>
+				{% endif %}
+
+				<h3>{{ day }}</h3>
+			</div>
+			<div class="card-body">
+				<div class="accordion custom-accordion mb-3" id="nameList{{ i }}">
+					{% for agendamento in agendamentos %}
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="day_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+							<button
+								class="accordion-button collapsed"
+								type="button"
+								data-bs-toggle="collapse"
+								data-bs-target="#details{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+								aria-expanded="false"
+								aria-controls="details{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+								<div class="d-flex flex-column w-100 justify-content-center">
+									<div class="text-left text-truncate" id="tituloAccordion">
+										<h6 style="display: inline">
+											{{ agendamento.horario }}
+											-
+										</h6>
+										<span>{{ agendamento.nome_do_tutor }}</span>
+									</div>
+									<div class="text-left text-truncate fs-6"></div>
+								</div>
+							</button>
+						</h2>
+						<div
+							id="details{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+							class="accordion-collapse collapse"
+							aria-labelledby="day_{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+							data-bs-parent="#nameList{{ forloop.parentloop.counter }}">
+							<div class="accordion-body w-100" id="detalhesAccordion">
+								<div class="text-start">
+									<h6>Tipo de agendamento</h6>
+									<p>
+										{{ agendamento.tipo_de_agendamento }}
+									</p>
+									<h6>Nome do tutor</h6>
+									<p>
+										{{ agendamento.nome_do_tutor }}
+									</p>
+									<h6>Whatsapp</h6>
+									<p>
+										{{ agendamento.whatsapp }}
+									</p>
+									<h6>Email</h6>
+									<p>
+										{{ agendamento.email }}
+									</p>
+									<h6>Nome do pet</h6>
+									<p>
+										{{ agendamento.nome_do_animal }}
+									</p>
+									<h6>Tipo de pet</h6>
+									<p>
+										{{ agendamento.tipo_de_animal }}
+									</p>
+									<h6>Idade</h6>
+									<p>
+										{{ agendamento.idade_do_animal }}
+									</p>
+									<h6>Peso</h6>
+									<p>
+										{{ agendamento.peso_do_animal }}
+									</p>
+									<h6>Observações</h6>
+									<p>
+										{{ agendamento.observacoes }}
+									</p>
+								</div>
+								<div class="text-center mt-3 wrapper">
+									<a href=" {% url 'editar_agendamento' id=agendamento.id %} " class="btn btn-primary botao-editar">Editar</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					{% endfor %}
+				</div>
+				{% endwith %}
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
