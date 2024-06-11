@@ -8,11 +8,13 @@ Agendamento concluído
 {% endblock %}
 {% block content %}
 <img src="{% static 'img/logo.png' %}" alt="Logo" />
-<h1 id="titulo_confirmacao">Agendamento realizado com sucesso!</h1>
+<h1 id="titulo_confirmacao">Dados editados com sucesso!</h1>
 <div class="caixa_dados" id="mensagem_confirmacao">
-	<p id="texto_confirmacao">A confirmação do seu agendamento foi enviada por e-mail</p>
-	<a id="link_botao_cadastrar_novamente" href="{% url 'agendar' %}"
-		><button class="botao_cadastrar" id="botao_cadastrar_novamente">Realizar outro agendamento</button></a
-	>
+	<p id="texto_confirmacao">Um e-mail foi enviado com a confirmação da alteração dos dados</p>
+	<a id="link_botao_voltar" href="#"><button class="botao_cadastrar" id="botao_voltar">Voltar</button></a>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/sucesso_scripts.js' %}"></script>
 {% endblock %}

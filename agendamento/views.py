@@ -20,19 +20,22 @@ from babel.dates import format_date
 from rest_framework import viewsets
 from .serializers import AgendamentoSerializer
 from django.core.paginator import Paginator
+from django.urls import reverse
 
 
 def gerar_horarios_indisponiveis():
     agendamentos = (
-        Agendamento.objects.filter(data__gte=timezone.now().date())
+        Agendamento.objects.filter(data__gte=timezone.localtime().date())
         .exclude(horario=None)
-        .values("data", "horario")
+        .values("data", "horario", "tipo_de_agendamento")
     )
+
     horarios_indisponiveis = {}
 
     for agendamento in agendamentos:
         data = agendamento["data"].strftime("%Y-%m-%d")
         horario = agendamento["horario"].strftime("%H:%M")
+        tipo_de_agendamento = agendamento["tipo_de_agendamento"]
 
         if data not in horarios_indisponiveis:
             horarios_indisponiveis[data] = {
@@ -42,14 +45,23 @@ def gerar_horarios_indisponiveis():
                 "horario_17": False,
             }
 
-        if horario == "14:00":
-            horarios_indisponiveis[data]["horario_14"] = True
-        elif horario == "15:00":
-            horarios_indisponiveis[data]["horario_15"] = True
-        elif horario == "16:00":
-            horarios_indisponiveis[data]["horario_16"] = True
-        elif horario == "17:00":
-            horarios_indisponiveis[data]["horario_17"] = True
+        # Se o tipo de agendamento for Cirurgia, marcar todos os horários como indisponíveis
+        if tipo_de_agendamento == "Cirurgia":
+            horarios_indisponiveis[data] = {
+                "horario_14": True,
+                "horario_15": True,
+                "horario_16": True,
+                "horario_17": True,
+            }
+        else:
+            if horario == "14:00":
+                horarios_indisponiveis[data]["horario_14"] = True
+            elif horario == "15:00":
+                horarios_indisponiveis[data]["horario_15"] = True
+            elif horario == "16:00":
+                horarios_indisponiveis[data]["horario_16"] = True
+            elif horario == "17:00":
+                horarios_indisponiveis[data]["horario_17"] = True
 
     return [
         {"data": data, **horarios} for data, horarios in horarios_indisponiveis.items()
@@ -57,54 +69,78 @@ def gerar_horarios_indisponiveis():
 
 
 def agendar(request, id=None):
-    if id is not None:
-        agendamento = get_object_or_404(Agendamento, pk=id)
-    else:
-        agendamento = None
+    previous_url = None
+    referer = request.META.get("HTTP_REFERER")
+    if referer:
+        previous_url = referer
+
+    agendamento = get_object_or_404(Agendamento, pk=id) if id else None
+    agendamento = None if not request.user.is_authenticated else agendamento
 
     if request.method == "POST":
-        if request.user.is_authenticated:
-            form = AgendamentoFormAdm(request.POST, instance=agendamento)
-        else:
-            form = AgendamentoForm(request.POST)
+        form_cls = (
+            AgendamentoFormAdm if request.user.is_authenticated else AgendamentoForm
+        )
+        form = form_cls(request.POST, instance=agendamento)
 
         if form.is_valid():
             form.save()
             request.session["form_submitted"] = True
             return redirect("sucesso")
     else:
-        if agendamento is not None:
-            if request.user.is_authenticated:
-                form = AgendamentoFormAdm(instance=agendamento)
-            else:
-                form = None
-        else:
-            if request.user.is_authenticated:
-                form = AgendamentoFormAdm()
-            else:
-                form = AgendamentoForm()
+        instance = agendamento if agendamento else None
+        form_cls = (
+            AgendamentoFormAdm if request.user.is_authenticated else AgendamentoForm
+        )
+        form = form_cls(instance=instance)
 
-    horarios_indisponiveis = []
-    if not request.user.is_authenticated:
-        horarios_indisponiveis = gerar_horarios_indisponiveis()
+    horarios_indisponiveis = gerar_horarios_indisponiveis()
+
+    if request.user.is_authenticated:
+        template = "agendamento/agendar_admin.html"
+    else:
+        template = "agendamento/agendar.html"
 
     return render(
         request,
-        "agendamento/agendar.html",
+        template,
         {
             "form": form,
             "horarios_indisponiveis": dumps(
                 horarios_indisponiveis, cls=DjangoJSONEncoder
             ),
+            "previous_url": previous_url,
         },
     )
 
 
+def has_substring_after(main_string, sub_string):
+    # Encontra a posição inicial da substring na string principal
+    position = main_string.find(sub_string)
+
+    # Se a substring não for encontrada, retorna False
+    if position == -1:
+        return False
+
+    # Calcula a posição onde a substring termina
+    end_position = position + len(sub_string)
+
+    # Verifica se há algo depois da posição final da substring
+    return end_position < len(main_string)
+
+
 def sucesso(request):
+    previous_url = None
+    referer = request.META.get("HTTP_REFERER")
+    if referer:
+        previous_url = referer
     if not request.session.get("form_submitted"):
         return HttpResponseForbidden("Acesso proibido")
     request.session["form_submitted"] = False
-    return render(request, "agendamento/sucesso.html")
+    if has_substring_after(previous_url, "/agendar/"):
+        return render(request, "agendamento/sucesso_editar.html")
+    else:
+        return render(request, "agendamento/sucesso.html")
 
 
 def get_week_dates(today):

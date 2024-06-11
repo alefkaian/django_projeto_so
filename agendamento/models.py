@@ -66,22 +66,29 @@ class Agendamento(models.Model):
     def save(self, *args, **kwargs):
         data_agendamento = self.data
         horario_agendamento = self.horario
+
+        if self.tipo_de_agendamento == "Cirurgia" and data_agendamento:
+            # Desmarcar todos os agendamentos com a mesma data
+            Agendamento.objects.filter(data=data_agendamento).exclude(
+                pk=self.pk
+            ).update(
+                data=None,
+                horario=None,
+                observacoes=F("observacoes")
+                + f"\nDesmarcado devido a agendamento de cirurgia na data: {data_agendamento}\n",
+            )
+
         # Verificar se já existe algum agendamento com a mesma data e horario
         agendamentos_com_mesma_data_hora = Agendamento.objects.filter(
-            data=data_agendamento,
-            horario=horario_agendamento
+            data=data_agendamento, horario=horario_agendamento
         ).exclude(pk=self.pk)
-
-        for agendamento in agendamentos_com_mesma_data_hora:
-            # Verificar se o agendamento já está nulo
-            if agendamento.data is not None or agendamento.horario is not None:
-                agendamento.data = None
-                agendamento.horario = None
-                agendamento.observacoes += f"\nData anterior: {data_agendamento}\nHorário anterior: {horario_agendamento}\n"
-                agendamento.save()  # Salvar as alterações no agendamento existente
-
         # Atualizar os agendamentos existentes sem chamar save()
-        agendamentos_com_mesma_data_hora.update(data=None, horario=None, observacoes=F("observacoes") + f"\nData anterior: {data_agendamento}\nHorário anterior: {horario_agendamento}\n")
+        agendamentos_com_mesma_data_hora.update(
+            data=None,
+            horario=None,
+            observacoes=F("observacoes")
+            + f"\nData anterior: {data_agendamento}\nHorário anterior: {horario_agendamento}\n",
+        )
 
         # Chamar o método save da classe pai para salvar o novo agendamento ou atualizar o existente
         super().save(*args, **kwargs)

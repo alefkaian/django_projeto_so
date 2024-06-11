@@ -23,7 +23,7 @@ router.register(
 urlpatterns = [
     path("api/", include(router.urls)),
     path("agendar/", views.agendar, name="agendar"),
-    re_path(r"^agendar/(?P<id>\d+)/$", views.agendar, name="editar_agendamento"),
+    re_path(r"^agendar/(?P<id>\d+)/$", login_required(views.agendar), name="editar_agendamento"),
     path("sucesso/", views.sucesso, name="sucesso"),
     path("teste/", views.teste, name="teste"),
     path("login/", views.login_view, name="login"),

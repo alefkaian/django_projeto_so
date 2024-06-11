@@ -12,6 +12,12 @@ $(document).ready(function () {
 	var idadeDoAnimalInput = document.getElementById("id_idade_do_animal");
 	var pesoDoAnimalInput = document.getElementById("id_peso_do_animal");
 
+
+	if (!previousUrl.includes("/agendar/") && !previousUrl.includes("/sucesso/") && previousUrl !== "None") {
+		sessionStorage.setItem("previousPage", previousUrl);
+	}
+
+
 	var enterKeydownListener = function (event) {
 		if (event.key === "Enter") {
 			event.preventDefault();
@@ -148,13 +154,27 @@ $(document).ready(function () {
 		}
 	}
 
+	/**
+	 * Este evento é acionado quando a caixa de confirmação é alterada.
+	 * Desabilita o botão "Cadastrar" se a caixa não estiver marcada.
+	 */
 	document.getElementById("confirmacao").addEventListener("change", function () {
+		// Obter o botão "Cadastrar"
 		var botao = document.querySelector(".botao_cadastrar");
+		// Desabilitar o botão se a caixa não estiver marcada
 		botao.disabled = !this.checked;
 	});
+
+	// Definir a configuração do datepicker para Português (Brasil)
 	$.datepicker.setDefaults($.datepicker.regional["pt-BR"]);
+
+	// Obter o elemento select para o campo horario
 	var selectHorario = document.getElementById("id_horario");
 
+	/**
+	 * Esta função gera um array de datas que não estão disponíveis para agendamento.
+	 * @returns {Array} Um array de datas que não estão disponíveis para agendamento
+	 */
 	function gerar_dias_indisponiveis() {
 		let dias_indisponiveis = [];
 		if (horariosIndisponiveis !== undefined) {
@@ -173,23 +193,31 @@ $(document).ready(function () {
 		return dias_indisponiveis;
 	}
 
+	// Gerar o array de datas indisponíveis
 	var disabledDates = gerar_dias_indisponiveis();
 
 	let selectedDate;
 
+	/**
+	 * Esta função desabilita certas datas no datepicker.
+	 * @param {Date} date - A data a ser verificada
+	 * @returns {Array} - Um array com o primeiro elemento indicando se a data está habilitada ou não, e o segundo elemento sendo uma string vazia.
+	 */
 	function disableDates(date) {
 		const noWeekends = $.datepicker.noWeekends(date);
 		if (!noWeekends[0]) {
-			return noWeekends; // If it's a weekend, return false.
+			return noWeekends; // Se for um fim de semana, retorne falso.
 		}
 
 		const formattedDate = $.datepicker.formatDate("yy-mm-dd", date);
 		if (disabledDates.includes(formattedDate)) {
-			return [false, "", "Indisponível"];
+			if (isUserAuthenticated) return [true, "data_indisponivel", "Indisponível"];
+			else return [false, "", "Indisponível"];
 		}
 		return [true, ""];
 	}
 
+	// Configurar o datepicker
 	$("#datePicker").datepicker({
 		dateFormat: "DD, d 'de' M 'de' yy",
 		minDate: 0,
@@ -197,6 +225,7 @@ $(document).ready(function () {
 		onSelect: function (dateText, inst) {
 			selectedDate = $(this).datepicker("getDate");
 			selectedDateDjangoFomat = $.datepicker.formatDate("yy-mm-dd", selectedDate);
+			// Carregar as opções disponíveis para a data selecionada
 			carregarOpcoesHorario(converterSelectedDateEmHorario(selectedDateDjangoFomat));
 			$("#id_data").val(selectedDateDjangoFomat);
 			$(this).removeClass("input_invalido");
@@ -204,18 +233,23 @@ $(document).ready(function () {
 		},
 	});
 
+	// Definir a data inicial se especificada no formulário
 	const dataInicial = $("#id_data").val();
 	if (dataInicial) {
 		if (dataInicial.substr(2, 1) === "/") {
 			dateF = $.datepicker.parseDate("dd/mm/yy", dataInicial);
 			$("#datePicker").datepicker("setDate", dateF);
-			
 		} else if (dataInicial.substr(4, 1) === "-") {
 			dateF = $.datepicker.parseDate("yy-mm-dd", dataInicial);
 			$("#datePicker").datepicker("setDate", dateF);
 		}
 	}
 
+	/**
+	 * Esta função converte a data selecionada para um array indicando quais opções estão disponíveis para essa data.
+	 * @param {string} date - A data selecionada no formato "yyyy-mm-dd"
+	 * @returns {Array} - Um array com cinco elementos indicando se cada opção está disponível ou não.
+	 */
 	function converterSelectedDateEmHorario(date) {
 		let objectDate = horariosIndisponiveis.filter((obj) => obj.data === date);
 		if (objectDate[0]) {
@@ -225,23 +259,36 @@ $(document).ready(function () {
 		}
 	}
 
+	/**
+	 * Esta função carrega as opções disponíveis para a data selecionada.
+	 * @param {Array} estadoHorarios - Um array indicando quais opções estão disponíveis para a data selecionada
+	 */
 	function carregarOpcoesHorario(estadoHorarios) {
-		// Reset all options to enabled first
+		// Primeiro, redefinir todas as opções para habilitadas
 		for (let i = 0; i < selectHorario.options.length; i++) {
 			selectHorario.options[i].disabled = false;
 		}
-		// Disable options based on the state of horarios
+
+		// Desabilitar as opções com base no estado de horarios
 		for (let i = 0; i < estadoHorarios.length; i++) {
 			if (estadoHorarios[i]) {
-				selectHorario.options[i].disabled = true;
+				if (isUserAuthenticated) {
+					selectHorario.options[i].classList.add("data_indisponivel");
+				} else {
+					selectHorario.options[i].disabled = true;
+				}
+			} else {
+				selectHorario.options[i].classList.remove("data_indisponivel");
 			}
 		}
-		// Clear the selected option if it is now disabled
+
+		// Limpar a opção selecionada se ela agora estiver desabilitada
 		if (selectHorario.selectedIndex >= 0 && selectHorario.options[selectHorario.selectedIndex].disabled) {
 			selectHorario.selectedIndex = 0;
 		}
 	}
 
+	// Carregar as opções disponíveis para a data inicial se especificada no formulário
 	if ($("#datePicker").val()) {
 		selectedDate = $("#datePicker").datepicker("getDate");
 		selectedDateDjangoFomat = $.datepicker.formatDate("yy-mm-dd", selectedDate);

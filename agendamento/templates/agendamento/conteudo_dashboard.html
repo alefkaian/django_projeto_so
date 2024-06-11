@@ -1,6 +1,6 @@
 <div class="row justify-content-between text-center">
 	{% for day, agendamentos in agendamentos_week_dates %}
-	<div class="col-md-2 mb-5 pt-4 {% if day == current_date %} dia_de_hoje {% endif %}">
+	<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2 {% if day == current_date %} dia_de_hoje {% endif %}">
 		<div class="card bg-primary mb-4">
 			<div class="card-header">
 				{% with forloop.counter0 as i %}
@@ -33,7 +33,7 @@
 								<div class="d-flex flex-column w-100 justify-content-center">
 									<div class="text-left text-truncate" id="tituloAccordion">
 										<h6 style="display: inline">
-											{{ agendamento.horario }}
+											{{ agendamento.horario|default:"A definir" }}
 											-
 										</h6>
 										<span>{{ agendamento.nome_do_tutor }}</span>
@@ -51,43 +51,44 @@
 								<div class="text-start">
 									<h6>Tipo de agendamento</h6>
 									<p>
-										{{ agendamento.tipo_de_agendamento }}
+										{{ agendamento.tipo_de_agendamento|default:"---" }}
 									</p>
 									<h6>Nome do tutor</h6>
 									<p>
-										{{ agendamento.nome_do_tutor }}
+										{{ agendamento.nome_do_tutor|default:"---" }}
 									</p>
 									<h6>Whatsapp</h6>
 									<p>
-										{{ agendamento.whatsapp }}
+										{{ agendamento.whatsapp|default:"---" }}
 									</p>
 									<h6>Email</h6>
 									<p>
-										{{ agendamento.email }}
+										{{ agendamento.email|default:"---" }}
 									</p>
 									<h6>Nome do pet</h6>
 									<p>
-										{{ agendamento.nome_do_animal }}
+										{{ agendamento.nome_do_animal|default:"---" }}
 									</p>
 									<h6>Tipo de pet</h6>
 									<p>
-										{{ agendamento.tipo_de_animal }}
+										{{ agendamento.tipo_de_animal|default:"---" }}
 									</p>
 									<h6>Idade</h6>
 									<p>
-										{{ agendamento.idade_do_animal }}
+										{{ agendamento.idade_do_animal|default:"---" }}
 									</p>
 									<h6>Peso</h6>
 									<p>
-										{{ agendamento.peso_do_animal }}
+										{{ agendamento.peso_do_animal|default:"---" }}
 									</p>
 									<h6>Observações</h6>
 									<p>
-										{{ agendamento.observacoes }}
+										{{ agendamento.observacoes|default:"---" }}
 									</p>
 								</div>
-								<div class="text-center mt-3 wrapper">
-									<a href=" {% url 'editar_agendamento' id=agendamento.id %} " class="btn btn-primary botao-editar">Editar</a>
+								<div class="text-center mt-3 wrapper w-100">
+									<a href=" {% url 'editar_agendamento' id=agendamento.id %} " 
+									class="btn btn-primary btn-block botao-editar w-100">Editar Dados</a>
 								</div>
 							</div>
 						</div>
@@ -95,6 +96,9 @@
 
 					{% endfor %}
 				</div>
+				{% if agendamentos.0.tipo_de_agendamento == 'Cirurgia' %}
+				<p class="" style="color: red">*Reservado para cirurgia</p> 
+				{% endif %}
 				{% endwith %}
 			</div>
 		</div>
