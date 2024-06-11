@@ -5,6 +5,7 @@ venv/
 venv_django/
 __pycache__/
 *.pyc
+staticfiles/*
 
 # Arquivos específicos
 ck --lost-found
