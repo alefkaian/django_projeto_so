@@ -1,4 +1,5 @@
-{% extends 'agendamento/base.html' %}
+{% extends 'agendamento/base_admin.html' %}
+
 {% load static %}
 {% block title %}
 Formulário de agendamento
@@ -44,9 +45,27 @@ Formulário de agendamento
 			<input type="checkbox" id="confirmacao" class="form-check-input" />
 			<label for="confirmacao" class="form-check-label">Confirmo que todas as informações estão corretas</label>
 		</div>
-		<input type="submit" class="botao_cadastrar" value="Agendar" disabled />
+		<input id="botao_cadastrar" type="submit" class="botao_cadastrar" value="Agendar" disabled/>
 	</form>
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+		  Você tem certeza que deseja prosseguir?
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+		  <button type="button" class="btn btn-primary" id="modalConfirmButton">Confirmar</button>
+		</div>
+	  </div>
+	</div>
+  </div>
 {% endblock %}
 
 {% block extra_js %}
@@ -54,7 +73,9 @@ Formulário de agendamento
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <script src="{% static 'js/datepicker-pt-br.js' %}"></script>
 <script>
+	const previousUrl = "{{ previous_url|safe }}";
 	const horariosIndisponiveis = {{ horarios_indisponiveis|safe }};
+	var isUserAuthenticated = {{ user.is_authenticated|lower }};
 </script>
 <script src="{% static 'js/custom_scripts.js' %}" defer></script>
 {% endblock %}

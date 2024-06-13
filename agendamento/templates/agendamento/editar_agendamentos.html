@@ -1,8 +1,7 @@
 {% extends 'agendamento/base_admin.html' %}
 {% load static %}
-{% block title %}Editar Agendamentos
-{% block titulo_editar %}
-{% endblock %}{% endblock %}
+{% block title %}Editar Agendamentos {{ periodo }}
+{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard_style.css' %}" />
@@ -12,9 +11,7 @@
 
 {% block content %}
 <h1 class="text-center mb-5">
-	Editar Agendamentos
-	{% block h1_editar %}{% endblock %}
-</h1>
+	Editar Agendamentos {{ periodo }}</h1>
 
 <div class="container p-3 bg-light table-responsive" style="max-width: 1500px;">
 	<table id="tabela-dados" class="pt-3" style="width: 100%">
@@ -32,7 +29,7 @@
 {% endblock %}
 {% block extra_js %}
 <script>
-	const thisPage = '{% block thisPage %}{% endblock %}';
+	const thisPage = '{{ periodo}}';
 	const urlTranslation = "{% static 'json/data_tables_portuguese.json' %}";
 	const urlAgendar = "{% url 'agendar' %}";
 </script>

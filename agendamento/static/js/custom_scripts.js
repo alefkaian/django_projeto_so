@@ -3,20 +3,101 @@ $(document).ready(function () {
 	if (form) {
 		form.setAttribute("novalidate", true);
 	}
-	var nomeDoTutorInput = document.getElementById("id_nome_do_tutor");
-	var dateInput = document.getElementById("id_data_nascimento");
-	var phoneInput = document.getElementById("id_whatsapp");
-	var emailInput = document.getElementById("id_email");
-	var nomeDoAnimalInput = document.getElementById("id_nome_do_animal");
-	var tipoDeAnimalInput = document.getElementById("id_tipo_de_animal");
-	var idadeDoAnimalInput = document.getElementById("id_idade_do_animal");
-	var pesoDoAnimalInput = document.getElementById("id_peso_do_animal");
+	var selectHorario = document.getElementById("id_horario");
 
+	document.addEventListener("submit", function (event) {
+		event.preventDefault();
+		confirmacaoExtra();
+	});
+
+	function confirmacaoExtra() {
+		if ($("#id_tipo_de_agendamento").val() === "Cirurgia") {
+			atualizarModalAgendamentosDia();
+		} else if (selectHorario[selectHorario.selectedIndex].classList.contains("data_indisponivel")) {
+			atualizarModalAgendamentoHorario();
+		} else {
+			form.submit();
+		}
+	}
+
+	$("#modalConfirmButton").on("click", function () {
+		$("#confirmModal").modal("hide");
+		form.submit();
+	});
 
 	if (!previousUrl.includes("/agendar/") && !previousUrl.includes("/sucesso/") && previousUrl !== "None") {
 		sessionStorage.setItem("previousPage", previousUrl);
 	}
 
+	function atualizarModalAgendamentosDia() {
+		$.ajax({
+			url: "/api/req_agendamentos_dia",
+			method: "GET",
+			data: {
+				dia: $("#id_data").val(),
+			},
+			success: function (data) {
+				// Limpa o conteúdo atual do modal
+				$(".modal-body").empty();
+
+				// Adiciona o conteúdo recebido da requisição ao modal
+				$(".modal-body").append("A cirurgia irá cancelar todos os atendimentos do dia. Deseja continuar?");
+				if (data.length > 0) {
+					$(".modal-body").append("<br/><br/> <span style='font-weight: bold; display: block'>Agendamentos afetados:</span>");
+					for (let i = 0; i < data.length; i++) {
+						if (data[i].horario !== null) {
+							$(".modal-body").append(data[i].horario.split(":")[0] + ":" + data[i].horario.split(":")[1] + " - ");
+						}
+						$(".modal-body").append(data[i].nome_do_tutor);
+						if (data[i].tipo_de_agendamento.length > 1) {
+							$(".modal-body").append(" / " + data[i].tipo_de_agendamento);
+						}
+						$(".modal-body").append("<br/>");
+					}
+				}
+
+				$("#confirmModal").modal("show");
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				// Trata erros de requisição
+				console.error("Erro ao fazer requisição:", errorThrown);
+			},
+		});
+	}
+
+	function atualizarModalAgendamentoHorario() {
+		$.ajax({
+			url: "/api/req_agendamento_horario",
+			method: "GET",
+			data: {
+				dia: $("#id_data").val(),
+				hora: $("#id_horario").val(),
+			},
+			success: function (data) {
+				// Limpa o conteúdo atual do modal
+				$(".modal-body").empty();
+
+				// Adiciona o conteúdo recebido da requisição ao modal
+				$(".modal-body").append("Este agendamento irá substituir o agendamento a seguir. Deseja continuar?");
+				if (data.length > 0) {
+					$(".modal-body").append("<br/><br/> <span style='font-weight: bold; display: block'>Agendamento afetado:</span>");
+					for (let i = 0; i < data.length; i++) {
+						$(".modal-body").append(data[i].horario.split(":")[0] + ":" + data[i].horario.split(":")[1] + " - ");
+						$(".modal-body").append(data[i].nome_do_tutor);
+						if (data[i].tipo_de_agendamento.length > 1) {
+							$(".modal-body").append(" / " + data[i].tipo_de_agendamento);
+						}
+					}
+				}
+
+				$("#confirmModal").modal("show");
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				// Trata erros de requisição
+				console.error("Erro ao fazer requisição:", errorThrown);
+			},
+		});
+	}
 
 	var enterKeydownListener = function (event) {
 		if (event.key === "Enter") {
@@ -168,9 +249,6 @@ $(document).ready(function () {
 	// Definir a configuração do datepicker para Português (Brasil)
 	$.datepicker.setDefaults($.datepicker.regional["pt-BR"]);
 
-	// Obter o elemento select para o campo horario
-	var selectHorario = document.getElementById("id_horario");
-
 	/**
 	 * Esta função gera um array de datas que não estão disponíveis para agendamento.
 	 * @returns {Array} Um array de datas que não estão disponíveis para agendamento
@@ -234,11 +312,12 @@ $(document).ready(function () {
 	});
 
 	// Definir a data inicial se especificada no formulário
-	const dataInicial = $("#id_data").val();
+	var dataInicial = $("#id_data").val();
 	if (dataInicial) {
 		if (dataInicial.substr(2, 1) === "/") {
 			dateF = $.datepicker.parseDate("dd/mm/yy", dataInicial);
 			$("#datePicker").datepicker("setDate", dateF);
+			document.querySelector("#id_data").value = dataInicial.split("/")[2] + "-" + dataInicial.split("/")[1] + "-" + dataInicial.split("/")[0];
 		} else if (dataInicial.substr(4, 1) === "-") {
 			dateF = $.datepicker.parseDate("yy-mm-dd", dataInicial);
 			$("#datePicker").datepicker("setDate", dateF);

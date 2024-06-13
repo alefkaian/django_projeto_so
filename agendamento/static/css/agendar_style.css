@@ -122,10 +122,17 @@ p {
 
 .error {
 	margin-bottom: 0;
-	margin-top: 0;
 	color: red;
 	font-weight: bold;
 	text-align: left;
+}
+
+.caixa_dados .error {
+	margin-top: 20px;
+}
+
+.form-group .error {
+	margin-top: 0;
 }
 
 .error p {
@@ -133,6 +140,8 @@ p {
 	margin: 0;
 	font-size: 16px;
 }
+
+
 
 #botao_voltar, #botao_cadastrar_novamente {
 	margin-left: auto;

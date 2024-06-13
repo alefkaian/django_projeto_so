@@ -6,7 +6,7 @@ from re import search
 
 class AgendamentoForm(forms.ModelForm):
 
-    data = forms.DateField(required=True)
+    data = forms.DateField(required=True) # type: ignore
     horario = forms.ChoiceField(required=True, choices= Agendamento.HORARIO_CHOICES)
     tipo_de_animal = forms.ChoiceField(required=True, choices=Agendamento.TIPO_DE_ANIMAL_CHOICES)
     class Meta:
@@ -116,7 +116,7 @@ class AgendamentoFormAdm(forms.ModelForm):
                 }
             ))
     tipo_de_agendamento = forms.ChoiceField(label="Tipo de Agendamento", required=False, choices=Agendamento.TIPO_DE_AGENDAMENTO_CHOICES)
-    data = forms.DateField(label="Data do Agendamento", required=False)
+    data = forms.DateField(label="Data do Agendamento", required=False) # type: ignore
     horario = forms.ChoiceField(label="Horário do Agendamento", required=False, choices=Agendamento.HORARIO_CHOICES)
 
     class Meta:
@@ -163,3 +163,11 @@ class AgendamentoFormAdm(forms.ModelForm):
         if not horario_clean:
             return None
         return horario_clean
+
+    def clean(self):
+        cleaned_data = super().clean()
+        data_clean = self.cleaned_data.get("data")
+        if Agendamento.objects.filter(data=data_clean, tipo_de_agendamento="Cirurgia").exists():
+            raise forms.ValidationError("Horário indisponível. Desmarque a cirurgia primeiro!")
+
+        return cleaned_data

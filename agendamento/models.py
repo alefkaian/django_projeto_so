@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import F
 import datetime as dt
+from django.utils import timezone
 
 
 class Agendamento(models.Model):
@@ -62,8 +63,13 @@ class Agendamento(models.Model):
 
     data = models.DateField(null=True, default=None)
     horario = models.TimeField(choices=HORARIO_CHOICES, null=True)
+    data_de_criacao = models.DateTimeField()
 
     def save(self, *args, **kwargs):
+
+        if not self.data_de_criacao:
+            self.data_de_criacao = timezone.localtime()
+
         data_agendamento = self.data
         horario_agendamento = self.horario
 
