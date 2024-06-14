@@ -67,6 +67,13 @@ def agendar(request, id=None):
 
 
 def sucesso(request):
+    if request.user.is_authenticated:
+        base_template = 'agendamento/base_admin.html'
+    else:
+        base_template = 'agendamento/base.html'
+    context = {
+        'base_template': base_template
+    }
     previous_url = None
     referer = request.META.get("HTTP_REFERER")
     if referer:
@@ -75,9 +82,9 @@ def sucesso(request):
         return HttpResponseForbidden("Acesso proibido")
     request.session["form_submitted"] = False
     if has_substring_after(previous_url, "/agendar/"):
-        return render(request, "agendamento/sucesso_editar.html")
+        return render(request, "agendamento/sucesso_editar.html", context)
     else:
-        return render(request, "agendamento/sucesso.html")
+        return render(request, "agendamento/sucesso.html", context)
 
 
 
@@ -152,6 +159,12 @@ def editar_agendamentos(request, periodo):
         case -1:
             return render(request, "agendamento/editar_agendamentos.html", {"periodo": "Antigos"})
 
+@login_required
+def agendamentos_sem_data(request):
+    context = {"agendamentos_sem_data": Agendamento.objects.filter(data__isnull=True).order_by('data_de_criacao')}
+    return render(request, "agendamento/agendamentos_sem_data.html", context)
+
+
 
 class ReqAgendamentosFuturos(viewsets.ModelViewSet):
     queryset = Agendamento.objects.filter(data__gte=datetime.now().date())
@@ -170,10 +183,10 @@ class ReqAgendamentosSemData(viewsets.ModelViewSet):
 class ReqAgendamentosDia(viewsets.ModelViewSet):
     serializer_class = AgendamentoSerializer
     def get_queryset(self):
-        data_especifica = self.request.query_params.get('dia', None)
+        data_especifica = self.request.query_params.get('dia', None) # type: ignore
         if data_especifica is not None and data_especifica != '':
             print(parse_datetime(data_especifica))
-            queryset = Agendamento.objects.filter(data=parse_datetime(data_especifica).date()).order_by('horario')
+            queryset = Agendamento.objects.filter(data=parse_datetime(data_especifica).date()).order_by('horario') # type: ignore
         else:
             queryset = Agendamento.objects.none()
 
@@ -183,14 +196,14 @@ class ReqAgendamentoHorario(viewsets.ModelViewSet):
     serializer_class = AgendamentoSerializer
 
     def get_queryset(self):
-        dia_especifico = self.request.query_params.get('dia', None)
-        hora_especifica = self.request.query_params.get('hora', None)
+        dia_especifico = self.request.query_params.get('dia', None) # type: ignore
+        hora_especifica = self.request.query_params.get('hora', None) # type: ignore
 
         if dia_especifico is not None and dia_especifico != '' and hora_especifica is not None and hora_especifica != '':
             data_hora = parse_datetime(f"{dia_especifico} {hora_especifica}")
             queryset = Agendamento.objects.filter(
-                Q(data=data_hora.date(), horario=data_hora.time()) |
-                (Q(tipo_de_agendamento="Cirurgia") & Q(data=data_hora.date()))
+                Q(data=data_hora.date(), horario=data_hora.time()) | # type: ignore
+                (Q(tipo_de_agendamento="Cirurgia") & Q(data=data_hora.date())) # type: ignore
             )
         else:
             queryset = Agendamento.objects.none()
@@ -201,47 +214,6 @@ def redirect_root(request):
     return redirect("agendar")
 
 
-def teste(request, id=None):
-    previous_url = None
-    referer = request.META.get("HTTP_REFERER")
-    if referer:
-        previous_url = referer
-
-    agendamento = get_object_or_404(Agendamento, pk=id) if id else None
-    agendamento = None if not request.user.is_authenticated else agendamento
-
-    if request.method == "POST":
-        form_cls = (
-            AgendamentoFormAdm if request.user.is_authenticated else AgendamentoForm
-        )
-        form = form_cls(request.POST, instance=agendamento)
-
-        if form.is_valid():
-            form.save()
-            request.session["form_submitted"] = True
-            return redirect("sucesso")
-    else:
-        instance = agendamento if agendamento else None
-        form_cls = (
-            AgendamentoFormAdm if request.user.is_authenticated else AgendamentoForm
-        )
-        form = form_cls(instance=instance)
-
-    horarios_indisponiveis = gerar_horarios_indisponiveis()
-
-    if request.user.is_authenticated:
-        template = "agendamento/teste.html"
-    else:
-        template = "agendamento/agendar.html"
-
-    return render(
-        request,
-        template,
-        {
-            "form": form,
-            "horarios_indisponiveis": dumps(
-                horarios_indisponiveis, cls=DjangoJSONEncoder
-            ),
-            "previous_url": previous_url,
-        },
-    )
+def teste(request):
+    context = {"agendamentos_sem_data": Agendamento.objects.filter(data__isnull=True).order_by('data_de_criacao')}
+    return render(request, "agendamento/sem_data.html", context)

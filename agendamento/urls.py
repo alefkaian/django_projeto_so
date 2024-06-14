@@ -46,4 +46,5 @@ urlpatterns = [
     path('editar-agendamentos-sem-data/', login_required(views.editar_agendamentos), {'periodo': 0}, name='editar-agendamentos-sem-data'), # type: ignore
     path('editar-agendamentos-futuros/', login_required(views.editar_agendamentos), {'periodo': 1}, name='editar-agendamentos-futuros'), # type: ignore
     path('editar-agendamentos-antigos/', login_required(views.editar_agendamentos), {'periodo': -1}, name='editar-agendamentos-antigos'), # type: ignore
+    path('agendamentos-sem-data/', login_required(views.agendamentos_sem_data), name='agendamentos-sem-data'),
 ]

@@ -1,34 +1,52 @@
+/**
+ * Adds event listeners and sets up functionality for the document ready event.
+ */
 $(document).ready(function () {
+	// Get the form element and disable HTML5 form validation
 	var form = document.getElementById("formulario");
 	if (form) {
 		form.setAttribute("novalidate", true);
 	}
+
+	// Get the select element for the horário
 	var selectHorario = document.getElementById("id_horario");
 
+	// Add event listener for form submission
 	document.addEventListener("submit", function (event) {
 		event.preventDefault();
 		confirmacaoExtra();
 	});
 
+	/**
+	 * Opens the confirmation modal based on the selected tipo de agendamento and horário.
+	 */
 	function confirmacaoExtra() {
 		if ($("#id_tipo_de_agendamento").val() === "Cirurgia") {
+			// Open the modal for cirurgia confirmation
 			atualizarModalAgendamentosDia();
 		} else if (selectHorario[selectHorario.selectedIndex].classList.contains("data_indisponivel")) {
+			// Open the modal for horário confirmation
 			atualizarModalAgendamentoHorario();
 		} else {
+			// Submit the form
 			form.submit();
 		}
 	}
 
+	// Add event listener for confirmation button click
 	$("#modalConfirmButton").on("click", function () {
 		$("#confirmModal").modal("hide");
 		form.submit();
 	});
 
+	// Store the previous URL in session storage
 	if (!previousUrl.includes("/agendar/") && !previousUrl.includes("/sucesso/") && previousUrl !== "None") {
 		sessionStorage.setItem("previousPage", previousUrl);
 	}
 
+	/**
+	 * Open the confirmation modal for atualizarModalAgendamentosDia API request.
+	 */
 	function atualizarModalAgendamentosDia() {
 		$.ajax({
 			url: "/api/req_agendamentos_dia",
@@ -37,10 +55,10 @@ $(document).ready(function () {
 				dia: $("#id_data").val(),
 			},
 			success: function (data) {
-				// Limpa o conteúdo atual do modal
+				// Clear the content of the modal
 				$(".modal-body").empty();
 
-				// Adiciona o conteúdo recebido da requisição ao modal
+				// Add the content received from the API request to the modal
 				$(".modal-body").append("A cirurgia irá cancelar todos os atendimentos do dia. Deseja continuar?");
 				if (data.length > 0) {
 					$(".modal-body").append("<br/><br/> <span style='font-weight: bold; display: block'>Agendamentos afetados:</span>");
@@ -59,25 +77,29 @@ $(document).ready(function () {
 				$("#confirmModal").modal("show");
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				// Trata erros de requisição
+				// Handle request errors
 				console.error("Erro ao fazer requisição:", errorThrown);
 			},
 		});
 	}
 
+	/**
+	 * Open the confirmation modal for atualizarModalAgendamentoHorario API request.
+	 */
 	function atualizarModalAgendamentoHorario() {
+		// Make an AJAX GET request to the API endpoint
 		$.ajax({
-			url: "/api/req_agendamento_horario",
+			url: "/api/req_agendamento_horario", // API endpoint
 			method: "GET",
 			data: {
-				dia: $("#id_data").val(),
-				hora: $("#id_horario").val(),
+				dia: $("#id_data").val(), // Get the value of the "data" input field
+				hora: $("#id_horario").val(), // Get the value of the "horario" input field
 			},
 			success: function (data) {
-				// Limpa o conteúdo atual do modal
+				// Clear the content of the modal
 				$(".modal-body").empty();
 
-				// Adiciona o conteúdo recebido da requisição ao modal
+				// Add the content received from the API request to the modal
 				$(".modal-body").append("Este agendamento irá substituir o agendamento a seguir. Deseja continuar?");
 				if (data.length > 0) {
 					$(".modal-body").append("<br/><br/> <span style='font-weight: bold; display: block'>Agendamento afetado:</span>");
@@ -90,15 +112,20 @@ $(document).ready(function () {
 					}
 				}
 
+				// Show the confirmation modal
 				$("#confirmModal").modal("show");
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				// Trata erros de requisição
+				// Handle request errors
 				console.error("Erro ao fazer requisição:", errorThrown);
 			},
 		});
 	}
 
+	/**
+	 * Handle keydown events for the Enter key.
+	 * @param {Event} event - The keydown event.
+	 */
 	var enterKeydownListener = function (event) {
 		if (event.key === "Enter") {
 			event.preventDefault();
@@ -118,13 +145,14 @@ $(document).ready(function () {
 		}
 	};
 
+	// Add an event listener for keydown events
 	document.addEventListener("keydown", enterKeydownListener);
 
-	// Iterar sobre todos os campos do formulário
+	// Iterate over all form fields
 	document.querySelectorAll(".form-group").forEach(function (element) {
-		// Verificar se o campo tem erros
+		// Check if the field has errors
 		if (element.querySelector(".error")) {
-			// Adicionar a classe de erro ao campo
+			// Add the error class to the field
 			if (element.querySelector("input")) {
 				element.querySelector("input").classList.add("input_invalido");
 			} else {
@@ -143,9 +171,15 @@ $(document).ready(function () {
 		}
 	});
 
+	/**
+	 * Handles the input event for the "id_data_nascimento" field.
+	 * Formats the input value and validates its length.
+	 */
 	$("#id_data_nascimento").on("input", function () {
-		var inputValue = $(this).val();
-		inputValue = inputValue.replace(/\D/g, "");
+		var inputValue = $(this).val(); // Get the current value of the field
+		inputValue = inputValue.replace(/\D/g, ""); // Remove non-digit characters
+
+		// Format the input value based on its length
 		if (inputValue.length > 2 && inputValue.length <= 4) {
 			inputValue = `${inputValue.slice(0, 2)}/${inputValue.slice(2)}`;
 		} else if (inputValue.length > 4 && inputValue.length <= 6) {
@@ -153,75 +187,119 @@ $(document).ready(function () {
 		} else if (inputValue.length > 6) {
 			inputValue = `${inputValue.slice(0, 2)}/${inputValue.slice(2, 4)}/${inputValue.slice(4, 8)}`;
 		}
-		inputValue = inputValue.slice(0, 10);
-		$(this).val(inputValue);
+
+		inputValue = inputValue.slice(0, 10); // Truncate the input value to 10 characters
+		$(this).val(inputValue); // Update the field's value
+
+		// Validate the length of the input value and remove the error class if valid
 		if (inputValue.length == 10) {
-			$(this).removeClass("input_invalido");
-			$(this).next(".error").text("").hide();
+			$(this).removeClass("input_invalido"); // Remove the error class
+			$(this).next(".error").text("").hide(); // Hide the error message
 		}
 	});
 
+	/**
+	 * Handles the input event for the "id_whatsapp" field.
+	 * Formats the input value and validates its length.
+	 */
 	$("#id_whatsapp").on("input", function () {
-		var inputValue = $(this).val();
-		inputValue = inputValue.replace(/\D/g, "");
+		var inputValue = $(this).val(); // Get the current value of the field
+		inputValue = inputValue.replace(/\D/g, ""); // Remove non-digit characters
+
+		// Format the input value based on its length
 		if (inputValue.length > 2 && inputValue.length <= 7) {
 			inputValue = `(${inputValue.slice(0, 2)}) ${inputValue.slice(2)}`;
 		} else if (inputValue.length > 7 && inputValue.length <= 11) {
 			inputValue = `(${inputValue.slice(0, 2)}) ${inputValue.slice(2, 7)}-${inputValue.slice(7)}`;
 		}
-		inputValue = inputValue.slice(0, 15);
-		$(this).val(inputValue);
+
+		inputValue = inputValue.slice(0, 15); // Truncate the input value to 15 characters
+		$(this).val(inputValue); // Update the field's value
+
+		// Validate the length of the input value and remove the error class if valid
 		if (inputValue.length == 15) {
-			$(this).removeClass("input_invalido");
-			$(this).next(".error").text("").hide();
+			$(this).removeClass("input_invalido"); // Remove the error class
+			$(this).next(".error").text("").hide(); // Hide the error message
 		}
 	});
 
+	/**
+	 * Handles the input event for the "id_email" field.
+	 * Validates the input value using a regular expression.
+	 */
 	$("#id_email").on("input", function () {
-		var inputValue = $(this).val();
+		var inputValue = $(this).val(); // Get the current value of the field
+
+		// Validate the input value using a regular expression
 		if (validar_email(inputValue)) {
-			$(this).removeClass("input_invalido");
-			$(this).next(".error").text("").hide();
+			$(this).removeClass("input_invalido"); // Remove the error class
+			$(this).next(".error").text("").hide(); // Hide the error message
 		}
 	});
 
+	/**
+	 * Validates an email address using a regular expression.
+	 * @param {string} email - The email address to validate.
+	 * @returns {boolean} - True if the email is valid, false otherwise.
+	 */
 	function validar_email(email) {
-		if (email.length < 3) return false;
+		if (email.length < 3)
+			return false; // Email must have at least 3 characters
 		else {
-			var count_at = 0;
+			var count_at = 0; // Count the number of "@" characters in the email
 			for (var i = 0; i < email.length; i++) {
-				if (email[i] == "@") count_at++;
+				if (email[i] == "@") count_at++; // Increment the count if an "@" character is found
 			}
-			if (count_at == 1) return true;
-			else return false;
+			if (count_at == 1)
+				return true; // Email is valid if only one "@" character is found
+			else return false; // Email is invalid if more than one "@" character is found
 		}
 	}
 
+	/**
+	 * Handles the input event for the "id_nome_do_animal" field.
+	 * Removes non-alphanumeric characters from the input value.
+	 * Validates the length of the input value.
+	 */
 	$("#id_nome_do_animal").on("input", function () {
-		var inputValue = $(this).val();
-		inputValue = inputValue.replace(/[^a-zA-Z\s]/g, "");
+		var inputValue = $(this).val(); // Get the current value of the field
+		inputValue = inputValue.replace(/[^a-zA-Z\s]/g, ""); // Remove non-alphanumeric characters
+
+		// Validate the length of the input value and remove the error class if valid
 		if (inputValue.length > 1) {
-			$(this).removeClass("input_invalido");
-			$(this).next(".error").text("").hide();
+			$(this).removeClass("input_invalido"); // Remove the error class
+			$(this).next(".error").text("").hide(); // Hide the error message
 		}
-		$(this).val(inputValue);
+		$(this).val(inputValue); // Update the field's value
 	});
 
+	/**
+	 * Handles the input event for the "id_tipo_de_animal" field.
+	 * Validates that the input value is not equal to "Selecione".
+	 */
 	$("#id_tipo_de_animal").on("input", function () {
-		var inputValue = $(this).val();
+		var inputValue = $(this).val(); // Get the current value of the field
+
+		// Validate the input value and remove the error class if valid
 		if (inputValue !== "Selecione") {
-			$(this).removeClass("input_invalido");
-			$(this).next(".error").text("").hide();
+			$(this).removeClass("input_invalido"); // Remove the error class
+			$(this).next(".error").text("").hide(); // Hide the error message
 		}
 	});
 
+	/**
+	 * Handles the input event for the "id_idade_do_animal" and "id_peso_do_animal" fields.
+	 * Validates the input value using a function.
+	 */
 	$("#id_idade_do_animal, #id_peso_do_animal").on("input", function () {
-		var inputValue = $(this).val();
+		var inputValue = $(this).val(); // Get the current value of the field
+
+		// Validate the input value using a function
 		if (validar_numero(inputValue)) {
-			$(this).removeClass("input_invalido");
-			$(this).next(".error").text("").hide();
+			$(this).removeClass("input_invalido"); // Remove the error class
+			$(this).next(".error").text("").hide(); // Hide the error message
 		}
-		$(this).val(inputValue);
+		$(this).val(inputValue); // Update the field's value
 	});
 
 	function validar_numero(entrada) {

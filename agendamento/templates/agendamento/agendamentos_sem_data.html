@@ -1,0 +1,111 @@
+{% extends 'agendamento/base_admin.html' %}
+{% load static %}
+{% block title %}Lista de Agendamentos Sem Data{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" type="text/css" href="{% static 'css/dashboard_style.css' %}" />{% endblock %}
+
+{% block content %}
+<h1 class="text-center mb-5">Lista de Agendamentos Sem Data Marcada</h1>
+
+<div id="conteudoContainer">
+	<div class="row justify-content-between text-center">
+		{% for agendamento in agendamentos_sem_data %}
+		{% with forloop.counter0 as i %}
+		<div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2">
+			<div class="card bg-primary mb-4">
+				<div class="card-header">
+					<h5 class="m-0">{{ agendamento.nome_do_tutor }}</h5>
+				</div>
+				<div class="card-body">
+					<div class="accordion custom-accordion mb-3" id="nameList{{ i }}">
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="day_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+								<button
+									class="accordion-button collapsed"
+									type="button"
+									data-bs-toggle="collapse"
+									data-bs-target="#details{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+									aria-expanded="false"
+									aria-controls="details{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+									<div class="d-flex flex-column w-100 justify-content-center">
+										<div class="text-left text-truncate" id="tituloAccordion">
+											<h6 style="display: inline">
+												{{ agendamento.tipo_de_agendamento|default:"A definir" }}
+											</h6>
+										</div>
+										<div class="text-left text-truncate fs-6"></div>
+									</div>
+								</button>
+							</h2>
+							<div
+								id="details{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+								class="accordion-collapse collapse"
+								aria-labelledby="day_{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+								data-bs-parent="#nameList{{ forloop.parentloop.counter }}">
+								<div class="accordion-body w-100" id="detalhesAccordion">
+									<div class="text-start">
+										<h6>Tipo de agendamento</h6>
+										<p>
+											{{ agendamento.tipo_de_agendamento|default:"---" }}
+										</p>
+										<h6>Nome do tutor</h6>
+										<p>
+											{{ agendamento.nome_do_tutor|default:"---" }}
+										</p>
+										<h6>Whatsapp</h6>
+										<p>
+											{{ agendamento.whatsapp|default:"---" }}
+										</p>
+										<h6>Email</h6>
+										<p>
+											{{ agendamento.email|default:"---" }}
+										</p>
+										<h6>Nome do pet</h6>
+										<p>
+											{{ agendamento.nome_do_animal|default:"---" }}
+										</p>
+										<h6>Tipo de pet</h6>
+										<p>
+											{{ agendamento.tipo_de_animal|default:"---" }}
+										</p>
+										<h6>Idade</h6>
+										<p>
+											{{ agendamento.idade_do_animal|default:"---" }}
+										</p>
+										<h6>Peso</h6>
+										<p>
+											{{ agendamento.peso_do_animal|default:"---" }}
+										</p>
+										<h6>Observações</h6>
+										<p>
+											{{ agendamento.observacoes|default:"---" }}
+										</p>
+										<h6>Data de criação</h6>
+										<p>
+											{{ agendamento.data_de_criacao|default:"---" }}
+										</p>
+									</div>
+									<div class="text-center mt-3 wrapper w-100">
+										<a
+											href=" {% url 'editar_agendamento' id=agendamento.id %} "
+											class="btn btn-primary btn-block botao-editar w-100"
+											>Editar Dados</a
+										>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endwith %}
+		{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard_scripts.js' %}" defer></script>
+{% endblock %}
