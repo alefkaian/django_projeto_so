@@ -37,9 +37,9 @@ data_atual = datetime.now()
 data_inicio = data_atual - timedelta(days=60)
 data_fim = data_atual + timedelta(days=60)
 
-nomes_tutor = ["Maria", "João", "Pedro", "Ana", "Mariana", "José"]
+nomes_tutor = ["Maria", "Joao", "Pedro", "Ana", "Mariana", "Jose"]
 sobrenomes_tutor = ["Silva", "da Silva", "Melo", "Almeida", "Pereira", "Santos", "de Souza", "da Costa", "Barbosa", "Rocha", "Lima"]
-nomes_pet = ["Rex", "Totó", "Rengar", "Lala", "Mimi", "Caramelo", "Nemo", "Nala", "Pipoca", "Pudim", "Mel", "Bolinha"]
+nomes_pet = ["Rex", "Toto", "Rengar", "Lala", "Mimi", "Caramelo", "Nemo", "Nala", "Pipoca", "Pudim", "Mel", "Bolinha"]
 tipos_animal = ["Cachorro", "Gato", "Pássaro", "Hamster", "Coelho", "Outro"]
 tipos_agendamento = ["Consulta", "Exames", "Vacinação", "Cirurgia"]
 
@@ -61,9 +61,9 @@ for _ in range(100):
         continue
 
     nome_do_tutor = random.choice(nomes_tutor) + " " + random.choice(sobrenomes_tutor)
-    data_nascimento = random_date(datetime(1950, 1, 1), datetime(2010, 1, 1)).strftime("%Y-%m-%d")
+    data_nascimento = random_date(datetime(1950, 1, 1), datetime(2010, 1, 1)).strftime("%d/%m/%Y")
     whatsapp = '(' + str(random.randint(11, 99)) + ') ' + str(random.randint(10000, 99999)) + '-' + str(random.randint(1000, 9999))
-    email = f"{nome_do_tutor.lower()}@example.com"
+    email = f"{nome_do_tutor.lower().replace(' ', '.')}@example.com"
     nome_do_animal = random.choice(nomes_pet)
     tipo_de_animal = random.choice(tipos_animal)
     idade_do_animal = str(random.randint(1, 20)) + random.choice([" anos", " meses", " dias"])

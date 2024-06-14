@@ -207,7 +207,7 @@ class AgendamentoFormAdm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         data_clean = self.cleaned_data.get("data")
-        if Agendamento.objects.filter(
+        if Agendamento.objects.exclude(id=self.instance.id).filter(
             data=data_clean, tipo_de_agendamento="Cirurgia"
         ).exists():
             raise forms.ValidationError(

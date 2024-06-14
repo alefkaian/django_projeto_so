@@ -10,6 +10,15 @@ $(document).ready(function () {
 
 	// Get the select element for the horário
 	var selectHorario = document.getElementById("id_horario");
+	var clearButton = document.getElementById("clear_date");
+
+	// Add event listener for clear button click
+	if (clearButton) {
+		clearButton.addEventListener("click", function () {
+			$("#datePicker").val("");
+			$("#id_data").val("");
+		});
+	}
 
 	// Add event listener for form submission
 	document.addEventListener("submit", function (event) {
@@ -59,7 +68,7 @@ $(document).ready(function () {
 				$(".modal-body").empty();
 
 				// Add the content received from the API request to the modal
-				$(".modal-body").append("A cirurgia irá cancelar todos os atendimentos do dia. Deseja continuar?");
+				$(".modal-body").append("A cirurgia irá reservar todos os horários do dia. Deseja continuar?");
 				if (data.length > 0) {
 					$(".modal-body").append("<br/><br/> <span style='font-weight: bold; display: block'>Agendamentos afetados:</span>");
 					for (let i = 0; i < data.length; i++) {
@@ -73,7 +82,6 @@ $(document).ready(function () {
 						$(".modal-body").append("<br/>");
 					}
 				}
-
 				$("#confirmModal").modal("show");
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -100,7 +108,7 @@ $(document).ready(function () {
 				$(".modal-body").empty();
 
 				// Add the content received from the API request to the modal
-				$(".modal-body").append("Este agendamento irá substituir o agendamento a seguir. Deseja continuar?");
+				$(".modal-body").append("Este agendamento irá afetar o agendamento a seguir. Deseja continuar?");
 				if (data.length > 0) {
 					$(".modal-body").append("<br/><br/> <span style='font-weight: bold; display: block'>Agendamento afetado:</span>");
 					for (let i = 0; i < data.length; i++) {
@@ -110,10 +118,11 @@ $(document).ready(function () {
 							$(".modal-body").append(" / " + data[i].tipo_de_agendamento);
 						}
 					}
+					// Show the confirmation modal
+					$("#confirmModal").modal("show");
+				} else {
+					form.submit();
 				}
-
-				// Show the confirmation modal
-				$("#confirmModal").modal("show");
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				// Handle request errors
@@ -376,7 +385,7 @@ $(document).ready(function () {
 	// Configurar o datepicker
 	$("#datePicker").datepicker({
 		dateFormat: "DD, d 'de' M 'de' yy",
-		minDate: 0,
+		minDate: isUserAuthenticated ? null : 0,
 		beforeShowDay: disableDates,
 		onSelect: function (dateText, inst) {
 			selectedDate = $(this).datepicker("getDate");

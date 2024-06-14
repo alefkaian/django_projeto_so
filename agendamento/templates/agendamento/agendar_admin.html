@@ -26,7 +26,8 @@ Formulário de agendamento
 		<div class="form-group">
 			{% if field.name == 'data' %}
 			<label for="datePicker">Data da Consulta</label>
-			<input type="text" id="datePicker" autocomplete="off" placeholder="Selecione uma data" readonly="readonly" />
+			<input type="text" id="datePicker" autocomplete="off" placeholder="Selecione uma data" readonly />
+			<button id="clear_date" type="button" class="btn btn-danger btn-sm justify-content-end btn-secondary mt-2">Limpar</button>
 			{% else %}
 			<label for="{{ field.id_for_label }}">{{ field.label }}</label>
 			{% endif %}
@@ -45,27 +46,25 @@ Formulário de agendamento
 			<input type="checkbox" id="confirmacao" class="form-check-input" />
 			<label for="confirmacao" class="form-check-label">Confirmo que todas as informações estão corretas</label>
 		</div>
-		<input id="botao_cadastrar" type="submit" class="botao_cadastrar" value="Agendar" disabled/>
+		<input id="botao_cadastrar" type="submit" class="botao_cadastrar" value="Agendar" disabled />
 	</form>
 </div>
 
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
-	  <div class="modal-content">
-		<div class="modal-header">
-		  <h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
-		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="confirmModalLabel">Confirmação</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">Você tem certeza que deseja prosseguir?</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+				<button type="button" class="btn btn-primary" id="modalConfirmButton">Confirmar</button>
+			</div>
 		</div>
-		<div class="modal-body">
-		  Você tem certeza que deseja prosseguir?
-		</div>
-		<div class="modal-footer">
-		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-		  <button type="button" class="btn btn-primary" id="modalConfirmButton">Confirmar</button>
-		</div>
-	  </div>
 	</div>
-  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
