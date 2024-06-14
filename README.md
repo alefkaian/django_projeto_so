@@ -6,6 +6,7 @@ Protótipo de website de agendamento para uma clínica veterinária
 
 Este é um projeto para uma clínica veterinária que tem como objetivo criar um website para agendamento de consultas, exames, cirurgias, etc.
 
+
 ## Funcionalidades
 
 - Cadastrar agendamentos
@@ -17,6 +18,7 @@ Este é um projeto para uma clínica veterinária que tem como objetivo criar um
 - Validação de formulários
 - Proteção contra ataques CSRF
 - Suporte para pesquisa de agendamentos
+
 
 ## Tecnologias
 
@@ -31,3 +33,5 @@ Este projeto foi desenvolvido utilizando as seguintes tecnologias:
 - CSS
 
 
+## WIP
+...
