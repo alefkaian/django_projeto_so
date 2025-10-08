@@ -7,25 +7,26 @@ Este projeto foi feito para uma disciplina de extensão em colaboração com o c
 
 * Cadastrar agendamentos
 
-<img width=auto height=360px alt="Página de agendamento mobile" src="https://github.com/user-attachments/assets/8e7aac45-10ff-4543-8e4c-c8e11c1bbec4" /> <img width=auto height=360px alt="Image" src="https://github.com/user-attachments/assets/f20bdb5d-dda6-48ca-9eb5-d0b14f492e82" />
+<img width=auto height=360px alt="Página de agendamento mobile" src="https://github.com/user-attachments/assets/8e7aac45-10ff-4543-8e4c-c8e11c1bbec4" />
+<img width=100% height=auto alt="Image" src="https://github.com/user-attachments/assets/f20bdb5d-dda6-48ca-9eb5-d0b14f492e82" />
 <br>
 <br>
 
 * Editar agendamentos
 
-<img width=auto height=400px alt="Editar agendamento desktop" src="https://github.com/user-attachments/assets/e53693f4-dc82-47b6-a1e2-cb7d4b8095b2" />
+<img width=100% height=auto alt="Editar agendamento desktop" src="https://github.com/user-attachments/assets/e53693f4-dc82-47b6-a1e2-cb7d4b8095b2" />
 <br>
 <br>
 
 * Visualizar agenda semanal
 
-<img width=auto height=380px alt="Dashboard desktop" src="https://github.com/user-attachments/assets/44c18f62-93ee-4c53-9e38-df277b1960ab" />
+<img width=100% height=auto alt="Dashboard desktop" src="https://github.com/user-attachments/assets/44c18f62-93ee-4c53-9e38-df277b1960ab" />
 <br>
 <br>
 
 * Visualizar tabela de agendamentos com função de busca
 
-<img width=auto height=380px alt="Tabela desktop" src="https://github.com/user-attachments/assets/c5e772e5-b26f-4553-a438-93c46a636233" />
+<img width=100% height=auto alt="Tabela desktop" src="https://github.com/user-attachments/assets/c5e772e5-b26f-4553-a438-93c46a636233" />
 <br>
 <br>
 
