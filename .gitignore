@@ -2,7 +2,7 @@
 .idea/
 .vscode/
 venv/
-venv_django/
+django_env/
 __pycache__/
 *.pyc
 
@@ -10,3 +10,4 @@ __pycache__/
 ck --lost-found
 .prettierrc
 db.sqlite3
+**/migrations/**
